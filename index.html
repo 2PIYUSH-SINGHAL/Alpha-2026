@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Welham Boys' School</title>
+</head>
+<body>
+<style>
+/* ============================================================
+   THERMAL BENCH — design tokens
+   Ground: cool porcelain / deep petrol. Accent: instrument teal.
+   Series colors are a separate, validated data palette.
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --surface-0: #E7DDCA;
+  --surface-1: #F4EDE0;
+  --surface-2: #FBF6EC;
+  --surface-sunk: #DCD0B8;
+  --line: #C6B599;
+  --line-soft: #DFD3BB;
+  --ink: #2A1D12;
+  --ink-2: #5C4733;
+  --ink-3: #8A7458;
+  --accent: #8A5A2B;
+  --accent-ink: #6E4520;
+  --accent-wash: rgba(138, 90, 43, .10);
+  --shadow: 0 1px 2px rgba(42, 29, 18, .06), 0 8px 24px -12px rgba(42, 29, 18, .22);
+  --shadow-lift: 0 2px 4px rgba(42, 29, 18, .07), 0 18px 40px -18px rgba(42, 29, 18, .32);
+
+  /* ordinal ramp — ordered sweeps (light→dark = less→more) */
+  --s1: #C39A62; --s2: #A87B42; --s3: #8A5C2C; --s4: #6B441E; --s5: #4E3014;
+  /* categorical — nominal sweeps (material, liquid, finish) */
+  --c1: #2A78D6; --c2: #EB6834; --c3: #1BAF7A; --c4: #EDA100; --c5: #E87BA4;
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --r-sm: 4px; --r-md: 8px; --r-lg: 14px;
+  --rail-w: 252px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface-0);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- shell ---------- */
+.app { display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); min-height: 100vh; }
+
+/* ---------- rail ---------- */
+.rail {
+  background: var(--surface-1);
+  border-right: 1px solid var(--line-soft);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.masthead { padding: 26px 22px 20px; border-bottom: 1px solid var(--line-soft); }
+.masthead h1 {
+  font-family: var(--font-display); font-weight: 400; font-size: 25px;
+  line-height: 1.14; margin: 0 0 14px; letter-spacing: -.01em; text-wrap: balance;
+}
+.masthead h1 em { font-style: italic; }
+.law {
+  font-family: var(--font-display); font-style: italic; font-size: 17px;
+  color: var(--ink-2); background: var(--surface-sunk); margin: 0 0 14px;
+  border-left: 2px solid var(--accent); padding: 8px 12px; border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+.law sub { font-size: .72em; }
+
+.nav-head {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink-3); padding: 20px 22px 8px;
+}
+.nav { list-style: none; margin: 0; padding: 0 12px 24px; display: flex; flex-direction: column; gap: 1px; }
+.nav button {
+  width: 100%; display: grid; grid-template-columns: 30px minmax(0,1fr); align-items: center;
+  gap: 10px; text-align: left; background: none; border: 0; cursor: pointer;
+  padding: 8px 10px; border-radius: var(--r-md); color: var(--ink-2);
+  font: inherit; font-size: 13.5px; line-height: 1.3; transition: background .14s, color .14s;
+}
+.nav button:hover { background: var(--accent-wash); color: var(--ink); }
+.nav .sym {
+  font-family: var(--font-display); font-style: italic; font-size: 15px;
+  color: var(--ink-3); text-align: center; transition: color .14s;
+}
+.nav .sym sub { font-size: .68em; font-style: normal; }
+.nav button[aria-current="true"] { background: var(--accent-wash); color: var(--ink); font-weight: 500; }
+.nav button[aria-current="true"] .sym { color: var(--accent-ink); }
+
+
+/* theme toggle */
+/* ---------- main ---------- */
+main { min-width: 0; padding: 34px 34px 72px; display: flex; flex-direction: column; gap: 20px; max-width: 1340px; }
+
+.exp-head { display: flex; flex-direction: column; gap: 10px; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .17em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+}
+.eyebrow .var-chip {
+  font-family: var(--font-display); font-style: italic; font-size: 13px; letter-spacing: 0;
+  text-transform: none; color: var(--accent-ink); background: var(--accent-wash);
+  border-radius: var(--r-sm); padding: 1px 8px;
+}
+.exp-head h2 {
+  font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.08; letter-spacing: -.018em; margin: 0; text-wrap: balance;
+}
+
+/* ---------- panels ---------- */
+.panel {
+  background: var(--surface-1); border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg); box-shadow: var(--shadow);
+}
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 13px 18px; border-bottom: 1px solid var(--line-soft); flex-wrap: wrap;
+}
+.panel-title {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .17em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: 8px; margin: 0;
+}
+.panel-title svg { width: 14px; height: 14px; color: var(--accent); }
+
+/* stage: apparatus + chart */
+.stage { display: grid; grid-template-columns: 336px minmax(0, 1fr); gap: 20px; align-items: start; }
+
+/* apparatus */
+.rig-body { padding: 6px 6px 0; }
+#rigCanvas { display: block; width: 100%; height: auto; aspect-ratio: 336 / 292; }
+.rig-readout {
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1px;
+  background: var(--line-soft); border-top: 1px solid var(--line-soft);
+  border-radius: 0 0 var(--r-lg) var(--r-lg); overflow: hidden;
+}
+.stat { background: var(--surface-1); padding: 11px 14px 12px; }
+.stat dt {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-3); margin: 0 0 3px;
+}
+.stat dd {
+  margin: 0; font-family: var(--font-mono); font-size: 19px; font-variant-numeric: tabular-nums;
+  color: var(--ink); letter-spacing: -.02em;
+}
+.stat dd span { font-size: 11px; color: var(--ink-3); margin-left: 2px; }
+
+/* transport */
+.transport { display: flex; align-items: center; gap: 6px; }
+.iconbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2);
+  border-radius: var(--r-md); width: 32px; height: 30px; cursor: pointer; padding: 0;
+  transition: color .14s, border-color .14s, background .14s;
+}
+.iconbtn:hover { color: var(--accent-ink); border-color: var(--accent); }
+.iconbtn svg { width: 15px; height: 15px; }
+.iconbtn.wide { width: auto; padding: 0 11px; font: inherit; font-size: 12px; }
+.iconbtn[aria-pressed="true"] { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-ink); }
+
+.seg { display: inline-flex; background: var(--surface-sunk); border-radius: var(--r-md); padding: 2px; gap: 2px; }
+.seg button {
+  border: 0; background: none; font: inherit; font-size: 11.5px; color: var(--ink-3);
+  padding: 4px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-mono); letter-spacing: .02em;
+}
+.seg button[aria-pressed="true"] { background: var(--surface-1); color: var(--ink); box-shadow: var(--shadow); }
+.seg button:disabled { opacity: .38; cursor: not-allowed; }
+
+/* chart */
+.chart-body { padding: 12px 16px 4px; position: relative; }
+#plotCanvas { display: block; width: 100%; height: 372px; touch-action: pan-y; }
+.tip {
+  position: absolute; pointer-events: none; opacity: 0; transition: opacity .12s;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md);
+  box-shadow: var(--shadow-lift); padding: 9px 11px; min-width: 152px; z-index: 5;
+}
+.tip.on { opacity: 1; }
+.tip-t {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 6px;
+}
+.tip-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); }
+.tip-row b { margin-left: auto; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 500; }
+.swatch { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 4px 18px 16px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.legend-item .swatch { width: 14px; height: 3px; border-radius: 2px; }
+
+/* controls */
+.ctl-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.ctl-body { padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-3);
+  border-radius: 999px; padding: 5px 12px 5px 9px; font: inherit; font-size: 12.5px;
+  font-variant-numeric: tabular-nums; transition: color .14s, border-color .14s, opacity .14s;
+}
+.chip .swatch { width: 10px; height: 10px; border-radius: 50%; opacity: .3; transition: opacity .14s; }
+.chip[aria-pressed="true"] { color: var(--ink); border-color: var(--line); background: var(--surface-1); box-shadow: var(--shadow); }
+.chip[aria-pressed="true"] .swatch { opacity: 1; }
+.chip:hover { border-color: var(--accent); }
+
+.field { display: flex; flex-direction: column; gap: 3px; }
+.field-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.field-top label { font-size: 13px; color: var(--ink-2); display: flex; align-items: center; gap: 7px; }
+.field-top label svg { width: 14px; height: 14px; color: var(--ink-3); flex: none; }
+.field-val { font-family: var(--font-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.field-val span { color: var(--ink-3); font-size: 10.5px; margin-left: 1px; }
+
+input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; width: 100%; height: 20px; margin: 0; cursor: pointer; }
+input[type=range]::-webkit-slider-runnable-track { height: 3px; background: var(--surface-sunk); border-radius: 2px; }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--surface-1); border: 2px solid var(--accent); margin-top: -6px; box-shadow: var(--shadow);
+}
+input[type=range]::-moz-range-track { height: 3px; background: var(--surface-sunk); border-radius: 2px; }
+input[type=range]::-moz-range-thumb { width: 13px; height: 13px; border-radius: 50%; background: var(--surface-1); border: 2px solid var(--accent); }
+
+select {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--r-md); padding: 6px 10px; width: 100%; cursor: pointer;
+}
+
+/* results table */
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 520px; }
+th, td { text-align: right; padding: 9px 14px; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 400; border-bottom: 1px solid var(--line);
+}
+tbody td { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+tbody td:first-child { font-family: var(--font-body); color: var(--ink-2); display: flex; align-items: center; gap: 9px; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr.is-active td { background: var(--accent-wash); }
+tbody tr { cursor: pointer; }
+tbody tr:hover td { background: var(--accent-wash); }
+
+
+
+/* ---------- responsive ---------- */
+@media (max-width: 1080px) {
+  .stage { grid-template-columns: 1fr; }
+  .ctl-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .rail {
+    position: sticky; top: 0; height: auto; z-index: 20;
+    border-right: 0; border-bottom: 1px solid var(--line);
+    box-shadow: 0 6px 18px -14px rgba(0,0,0,.5);
+  }
+  .masthead { padding: 16px 18px 14px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px 16px; align-items: start; border-bottom: 0; }
+  .masthead h1 { font-size: 20px; margin: 0; grid-column: 1; }
+  .law { display: none; }
+  .nav-head { display: none; }
+  .nav {
+    flex-direction: row; overflow-x: auto; padding: 0 12px 12px; gap: 6px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav li { flex: none; }
+  .nav button {
+    grid-template-columns: auto auto; width: auto; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px 6px 10px; font-size: 12.5px; gap: 7px;
+  }
+  .nav button[aria-current="true"] { border-color: var(--accent); }
+  .nav .sym { width: auto; }
+  main { padding: 22px 18px 60px; gap: 16px; }
+}
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+  main { padding: 18px 14px 52px; }
+  .exp-head h2 { font-size: 26px; }
+  #plotCanvas { height: 300px; }
+  .chart-body { padding: 10px 8px 2px; }
+  .legend { padding: 4px 14px 14px; gap: 5px 14px; }
+  .panel-head { padding: 11px 14px; }
+  .ctl-body { padding-left: 15px; padding-right: 15px; }
+  .rig-readout { grid-template-columns: repeat(3, 1fr); }
+  .stat { padding: 9px 10px 10px; }
+  .stat dd { font-size: 16px; }
+  .stat dt { font-size: 8.5px; letter-spacing: .1em; }
+  th, td { padding: 8px 10px; }
+}
+@media (max-width: 400px) {
+  .stat dd { font-size: 15px; }
+  .seg button { padding: 4px 8px; font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="i-fan"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 10c0-3 1-6 3.5-6S18 8 12 10zM10 12c-3 0-6-1-6-3.5S8 6 10 12zM14 12c3 0 6 1 6 3.5S16 18 14 12zM12 14c0 3-1 6-3.5 6S6 16 12 14z"/></g>
+    <g id="i-area"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 4v16"/></g>
+    <g id="i-vol"><path d="M6 3h12l-1 6.5a5 5 0 0 0 .6 3l.9 1.8A4 4 0 0 1 15 20H9a4 4 0 0 1-3.5-5.7l.9-1.8a5 5 0 0 0 .6-3z"/><path d="M6.6 13h10.8"/></g>
+    <g id="i-material"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></g>
+    <g id="i-flame"><path d="M12 3c3.5 4 5.5 6.4 5.5 9.5a5.5 5.5 0 1 1-11 0C6.5 9.4 8.5 7 12 3z"/><path d="M12 17.5a2.5 2.5 0 0 1-1.6-4.4c.9-.8 1.6-1.7 1.6-2.6.6 1 2.5 2.4 2.5 4.5a2.5 2.5 0 0 1-2.5 2.5z"/></g>
+    <g id="i-dist"><path d="M3 12h18"/><path d="M6 9l-3 3 3 3M18 9l3 3-3 3"/><path d="M12 7v10"/></g>
+    <g id="i-ambient"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></g>
+    <g id="i-liquid"><path d="M12 3s6 6.4 6 10.5a6 6 0 0 1-12 0C6 9.4 12 3 12 3z"/><path d="M9 14a3 3 0 0 0 3 3"/></g>
+    <g id="i-finish"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" opacity=".35"/><path d="M12 3v18"/></g>
+    <g id="i-angle"><path d="M4 19h16"/><path d="M4 19L17 6"/><path d="M11 19a7 7 0 0 0-1.6-4.4"/></g>
+    <g id="i-stir"><path d="M17 3v8a3 3 0 0 1-6 0V3"/><path d="M14 14v7"/><path d="M4 17c1.6-1.6 3.4-1.6 5 0"/></g>
+    <g id="i-lid"><path d="M4 9h16"/><path d="M12 9V5"/><path d="M6 12v4a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4v-4"/></g>
+    <g id="i-insul"><path d="M12 3l7 3v6c0 4.4-3 7.7-7 9-4-1.3-7-4.6-7-9V6z"/><path d="M8.5 11.5l2.5 2.5 4.5-4.5"/></g>
+    <g id="i-shape"><path d="M9.5 3h5"/><path d="M10.5 3v5.4a6.4 6.4 0 1 0 3 0V3"/><path d="M7.2 14.4h9.6"/></g>
+    <g id="i-chart"><path d="M3 3v18h18"/><path d="M6 15c3-1 4-8 7-8s3 4 5 3"/></g>
+    <g id="i-beaker"><path d="M9 3v6.2L4.7 17A3 3 0 0 0 7.3 21h9.4a3 3 0 0 0 2.6-4.5L15 9.2V3"/><path d="M7.5 3h9M6.4 14.5h11.2"/></g>
+    <g id="i-play"><path d="M8 5.5l10 6.5-10 6.5z"/></g>
+    <g id="i-pause"><path d="M9 5v14M15 5v14"/></g>
+    <g id="i-reset"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3 4v5h5"/></g>
+    <g id="i-bulb"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.5 10.9c-.6.4-.9 1-.9 1.7v.4h-5.2v-.4c0-.7-.3-1.3-.9-1.7A6 6 0 0 1 12 3z"/></g>
+    <g id="i-sliders"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></g>
+    <g id="i-table"><path d="M3 5h18v14H3z"/><path d="M3 10h18M9 10v9"/></g>
+  </defs>
+</svg>
+
+<div class="app">
+  <aside class="rail">
+    <div class="masthead">
+      <h1>Welham Boys' School</h1>
+      <p class="law">Alpha 2026</p>
+    </div>
+
+    <p class="nav-head">Variable under test</p>
+    <ul class="nav" id="nav"></ul>
+
+  </aside>
+
+  <main>
+    <header class="exp-head">
+      <p class="eyebrow"><span id="expIndex">Experiment 01 of 14</span><span class="var-chip" id="expSym">v</span><span id="expQty">airflow velocity</span></p>
+      <h2 id="expTitle">Effect of airflow velocity on cooling rate</h2>
+    </header>
+
+    <section class="stage">
+      <div class="panel">
+        <div class="panel-head">
+          <h3 class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-beaker"/></svg>Apparatus</h3>
+          <div class="transport">
+            <button class="iconbtn" id="playBtn" type="button" aria-label="Play run">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-play" id="playIcon"/></svg>
+            </button>
+            <button class="iconbtn" id="resetBtn" type="button" aria-label="Reset run to start">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-reset"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="rig-body"><canvas id="rigCanvas" role="img" aria-label="Animated schematic of the cooling apparatus"></canvas></div>
+        <dl class="rig-readout">
+          <div class="stat"><dt>Elapsed</dt><dd id="roTime">0<span>min</span></dd></div>
+          <div class="stat"><dt>Liquid</dt><dd id="roTemp">85<span>°C</span></dd></div>
+          <div class="stat"><dt>Heat loss</dt><dd id="roFlux">0<span>W</span></dd></div>
+        </dl>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3 class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"/></svg>Cooling curves</h3>
+          <div class="seg" role="group" aria-label="Vertical axis">
+            <button type="button" data-axis="abs" aria-pressed="true">T (°C)</button>
+            <button type="button" data-axis="excess" aria-pressed="false">T − T<sub>a</sub></button>
+            <button type="button" data-axis="log" aria-pressed="false">log (T − T<sub>a</sub>)</button>
+          </div>
+        </div>
+        <div class="chart-body">
+          <canvas id="plotCanvas"></canvas>
+          <div class="tip" id="tip" role="status"></div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </section>
+
+    <section class="ctl-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h3 class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-sliders"/></svg><span id="sweepTitle">Independent variable</span></h3>
+        </div>
+        <div class="ctl-body">
+          <div class="chips" id="sweepChips"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3 class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-lid"/></svg>Held constant</h3>
+        </div>
+        <div class="ctl-body" id="heldFields"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h3 class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-table"/></svg>Results</h3>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th id="thVar">Run</th>
+              <th>k (min⁻¹)</th>
+              <th>τ = 1/k (min)</th>
+              <th>t½ (min)</th>
+              <th>Initial rate</th>
+              <th>T at end</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+
+  </main>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. MATERIAL / FLUID PROPERTY TABLES
+   ============================================================ */
+const SIGMA = 5.670374419e-8, P_ATM = 101325, RH = 0.5, H_FG = 2.4e6;
+const R_VAP = 461.5, RHO_CP_AIR = 1200, LEWIS_23 = 0.89;
+
+const LIQUIDS = {
+  water:     { name: "Water",           rho: 997,  c: 4182, evap: 1.00, tint: "#7FB0D4" },
+  saltwater: { name: "Salt water",      rho: 1025, c: 3990, evap: 0.95, tint: "#9FC0D2" },
+  milk:      { name: "Milk",            rho: 1032, c: 3930, evap: 0.80, tint: "#EFEBDF" },
+  oil:       { name: "Vegetable oil",   rho: 917,  c: 1970, evap: 0.00, tint: "#E0C158" },
+  alcohol:   { name: "Rubbing alcohol", rho: 789,  c: 2440, evap: 1.90, tint: "#CBE0E6" },
+  glycerol:  { name: "Glycerin",        rho: 1261, c: 2430, evap: 0.02, tint: "#DBD5C0" }
+};
+
+const MATERIALS = {
+  foam:    { name: "Polystyrene foam", k: 0.033, t: 0.004,  shell: "#F0EADB" },
+  plastic: { name: "Polypropylene",    k: 0.22,  t: 0.002,  shell: "#DED6C6" },
+  glass:   { name: "Borosilicate glass", k: 1.05, t: 0.003, shell: "#CBC7B6" },
+  ceramic: { name: "Glazed ceramic",   k: 1.50,  t: 0.006,  shell: "#E6DCC8" },
+  steel:   { name: "Stainless steel",  k: 16,    t: 0.0012, shell: "#C4BFB4" },
+  alu:     { name: "Aluminium",        k: 205,   t: 0.0015, shell: "#D2CDC3" }
+};
+
+const FINISHES = {
+  black:    { name: "Matte black",       eps: 0.95, swatch: "#1C1C1C" },
+  white:    { name: "Matte white",       eps: 0.92, swatch: "#F1F1EC" },
+  silver:   { name: "Reflective silver", eps: 0.10, swatch: "#C3CCD1" },
+  red:      { name: "Gloss red",         eps: 0.90, swatch: "#B0322B" },
+  brushed:  { name: "Brushed aluminium", eps: 0.22, swatch: "#A7B0B4" },
+  polished: { name: "Polished chrome",   eps: 0.06, swatch: "#C7D0D4" }
+};
+
+const INSULATION = {
+  none: { name: "No insulation",  R: 0,    mm: 0 },
+  sty1: { name: "1 cm styrofoam", R: 0.30, mm: 10 },
+  sty2: { name: "2 cm styrofoam", R: 0.61, mm: 20 },
+  sty3: { name: "3 cm styrofoam", R: 0.91, mm: 30 }
+};
+
+const STIRRING = {
+  none:       { name: "Still",             h: 40 },
+  occasional: { name: "Occasional stir",   h: 120 },
+  steady:     { name: "Steady stir",       h: 350 },
+  vigorous:   { name: "Vigorous stir",     h: 800 }
+};
+
+const LIDS = {
+  closed: { name: "Closed",  open: 0.0 },
+  ajar:   { name: "Ajar",    open: 0.4 },
+  open:   { name: "Open",    open: 1.0 }
+};
+
+/* Vessel profiles. Each is a solid of revolution described by f(u): the radius at
+   height fraction u, as a fraction of the widest radius. The liquid always stands
+   at u = FILL, so the vessel stretches vertically to hold whatever volume is set —
+   the same rule the straight beaker has always followed. */
+const FILL = 0.75;
+const NSEG = 240;
+const IFILL = Math.round(FILL * NSEG);          // the fill line lands on a sample
+const smoothstep = (t) => t * t * (3 - 2 * t);
+
+const SHAPES = {
+  beaker: {
+    name: "Cylindrical beaker", straight: true,
+    f: () => 1
+  },
+  conical: {
+    name: "Conical flask",
+    f: (u) => u < 0.74 ? 1 - 0.946 * u : 0.30
+  },
+  bulb: {
+    name: "Round-bottom flask",
+    f: (u) => {
+      const sphere = (x) => Math.sqrt(Math.max(0, 1 - Math.pow((x - 0.40) / 0.42, 2)));
+      if (u <= 0.62) return sphere(u);
+      if (u >= 0.80) return 0.26;
+      return sphere(0.62) + (0.26 - sphere(0.62)) * smoothstep((u - 0.62) / 0.18);
+    }
+  },
+  inverted: {
+    name: "Inverted conical",
+    f: (u) => 0.34 + 0.66 * u
+  }
+};
+
+/** Sample a profile once: radii, slopes, and the volume integral up to the fill line. */
+function tabulate(f) {
+  const r = new Float64Array(NSEG + 1), dr = new Float64Array(NSEG + 1);
+  for (let i = 0; i <= NSEG; i++) r[i] = f(i / NSEG);
+  for (let i = 0; i <= NSEG; i++) {
+    const a = Math.max(0, i - 1), b = Math.min(NSEG, i + 1);
+    dr[i] = (r[b] - r[a]) * NSEG / (b - a);
+  }
+  let I2 = 0;
+  for (let i = 0; i < IFILL; i++) I2 += (r[i] * r[i] + r[i + 1] * r[i + 1]) / (2 * NSEG);
+  return { r, dr, I2 };
+}
+Object.values(SHAPES).forEach(s => { s.tab = tabulate(s.f); });
+
+/* ============================================================
+   2. PHYSICS — one heat balance, thirteen knobs
+   ============================================================ */
+const FAN_NOZZLE = 0.035;         // m — clip-fan outlet diameter
+const CORE = 6 * FAN_NOZZLE;      // potential-core length, ≈ 21 cm
+
+function psat(TC) { return 610.94 * Math.exp(17.625 * TC / (TC + 243.04)); }
+function humidityRatio(p) { return 0.622 * p / Math.max(P_ATM - p, 1); }
+function vaporDensity(TC, rh) { return rh * psat(TC) / (R_VAP * (TC + 273.15)); }
+
+/** Wetted areas of a vessel of revolution holding p.vol at its widest radius p.dia/2.
+    Hot inside the RK4 loop and a pure function of three knobs, so memoise it. */
+const geoCache = new Map();
+function geometry(p) {
+  const key = p.shape + "|" + p.dia + "|" + p.vol;
+  const hit = geoCache.get(key);
+  if (hit) return hit;
+
+  const tab = (SHAPES[p.shape] || SHAPES.beaker).tab;
+  const r = p.dia / 2000;                       // mm → m
+  const V = p.vol / 1e6;                        // mL → m³
+  const Hv = V / (Math.PI * r * r * tab.I2);    // full vessel height, m
+
+  // side wall: revolve the slant length, so a flared or waisted wall costs more area
+  let Aside = 0;
+  for (let i = 0; i < IFILL; i++) {
+    const rm = (tab.r[i] + tab.r[i + 1]) / 2, dm = (tab.dr[i] + tab.dr[i + 1]) / 2;
+    Aside += 2 * Math.PI * r * rm * Math.hypot(Hv, r * dm) / NSEG;
+  }
+
+  const g = {
+    r, V, Hv, H: FILL * Hv,
+    Abase: Math.PI * r * r * tab.r[0] * tab.r[0],
+    Atop:  Math.PI * r * r * tab.r[IFILL] * tab.r[IFILL],
+    Aside
+  };
+  if (geoCache.size > 400) geoCache.clear();
+  geoCache.set(key, g);
+  return g;
+}
+
+function coefficients(p) {
+  const vAtCup = p.dist / 100 <= CORE ? p.v : p.v * CORE / (p.dist / 100);
+  const aim = 0.25 + 0.75 * Math.cos(p.ang * Math.PI / 180);
+  const vEff = vAtCup * aim;
+  const hNat = 4.5;
+  const hFor = 12.1 * Math.pow(Math.max(vEff, 0), 0.6);
+  const hExt = Math.cbrt(hNat ** 3 + hFor ** 3);
+  return { vEff, hExt, hNat };
+}
+
+/** Instantaneous heat loss in watts, split by path. */
+function heatLoss(T, p) {
+  const g = geometry(p);
+  const { vEff, hExt, hNat } = coefficients(p);
+  const mat = MATERIALS[p.mat], fin = FINISHES[p.fin], ins = INSULATION[p.ins];
+  const lid = LIDS[p.lid], liq = LIQUIDS[p.liq];
+
+  const Tk = T + 273.15, Ak = p.tamb + 273.15;
+  const hRad = fin.eps * SIGMA * (Tk * Tk + Ak * Ak) * (Tk + Ak);
+
+  const Rin = 1 / STIRRING[p.stir].h;
+  const Rwall = mat.t / mat.k;
+  const dT = T - p.tamb;
+
+  // wetted side wall: film → wall → insulation → (convection ∥ radiation)
+  const Uside = 1 / (Rin + Rwall + ins.R + 1 / (hExt + hRad));
+  const Qside = Uside * g.Aside * dT;
+
+  // base: sits on the bench, poor contact, little air movement
+  const Ubase = 1 / (Rin + Rwall + ins.R + 1 / (0.35 * hNat + 0.2 * hRad));
+  const Qbase = Ubase * g.Abase * dT;
+
+  // top: free surface when open, lid material when closed
+  const f = lid.open;
+  const hTop = 1.15 * hExt;                       // the free surface catches the jet
+  const Uopen = 1 / (Rin + 1 / (hTop + hRad));
+  const Ushut = 1 / (Rin + Rwall + ins.R + 1 / (hExt + hRad));
+  const Qtop = g.Atop * (f * Uopen + (1 - f) * Ushut) * dT;
+
+  // evaporation from the free surface — Chilton–Colburn analogy with a
+  // Stefan-flow (blowing) correction, which matters above about 60 °C
+  const hMass = hTop / (RHO_CP_AIR * LEWIS_23);   // m/s
+  const dRho = Math.max(0, vaporDensity(T, 1) - vaporDensity(p.tamb, RH));
+  const ws = humidityRatio(psat(T)), wa = humidityRatio(RH * psat(p.tamb));
+  const ms = ws / (1 + ws), ma = wa / (1 + wa);
+  const B = Math.max(0, (ms - ma) / Math.max(1 - ms, 1e-6));
+  const blow = B > 1e-6 ? Math.log(1 + B) / B : 1;
+  const mdot = g.Atop * f * hMass * dRho * blow;
+  const Qevap = mdot * H_FG * liq.evap;
+
+  return { total: Qside + Qbase + Qtop + Qevap, evap: Qevap, C: liq.rho * g.V * liq.c };
+}
+
+const DT = 2; // s
+
+function simulate(p) {
+  const steps = Math.round(p.dur * 60 / DT);
+  const T = new Float32Array(steps + 1);
+  const Q = new Float32Array(steps + 1);
+  T[0] = p.t0;
+  const f = (x) => { const h = heatLoss(x, p); return -h.total / h.C; };
+  Q[0] = heatLoss(p.t0, p).total;
+  for (let i = 0; i < steps; i++) {
+    const y = T[i];
+    const k1 = f(y), k2 = f(y + DT * k1 / 2), k3 = f(y + DT * k2 / 2), k4 = f(y + DT * k3);
+    let n = y + DT * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+    T[i + 1] = Math.max(n, p.tamb + 0.001);
+    Q[i + 1] = heatLoss(T[i + 1], p).total;
+  }
+  return { T, Q, p };
+}
+
+function metrics(run) {
+  const { T, Q, p } = run, dT0 = p.t0 - p.tamb;
+  let half = null;
+  const target = p.tamb + dT0 / 2;
+  for (let i = 1; i < T.length; i++) {
+    if (T[i] <= target) {
+      const f = (T[i - 1] - target) / (T[i - 1] - T[i]);
+      half = (i - 1 + f) * DT / 60; break;
+    }
+  }
+  const rate0 = (T[0] - T[Math.min(30, T.length - 1)]) / (Math.min(30, T.length - 1) * DT / 60);
+  return {
+    half, k: half ? Math.LN2 / half : null, tau: half ? half / Math.LN2 : null,
+    rate0, tEnd: T[T.length - 1], q0: Q[0]
+  };
+}
+
+/* ============================================================
+   3. EXPERIMENT DEFINITIONS — the parameter vector as a syllabus
+   ============================================================ */
+const BASE = {
+  v: 4, dia: 80, vol: 250, mat: "glass", t0: 80, dist: 30, tamb: 22,
+  liq: "water", fin: "white", ang: 0, stir: "none", lid: "open", ins: "none",
+  shape: "beaker", dur: 40
+};
+
+const PARAM = {
+  v:    { label: "Fan speed",           icon: "i-fan",      unit: "m/s", min: 0, max: 8, step: 0.5, dp: 1 },
+  dia:  { label: "Cup diameter",        icon: "i-area",     unit: "mm", min: 50, max: 140, step: 5, dp: 0 },
+  shape:{ label: "Vessel shape",        icon: "i-shape",    opts: SHAPES },
+  vol:  { label: "Liquid volume",       icon: "i-vol",      unit: "mL", min: 100, max: 1000, step: 25, dp: 0 },
+  mat:  { label: "Container material",  icon: "i-material", opts: MATERIALS },
+  t0:   { label: "Initial temperature", icon: "i-flame",    unit: "°C", min: 40, max: 95, step: 1, dp: 0 },
+  dist: { label: "Fan distance",        icon: "i-dist",     unit: "cm", min: 5, max: 120, step: 5, dp: 0 },
+  tamb: { label: "Ambient temperature", icon: "i-ambient",  unit: "°C", min: 0, max: 40, step: 1, dp: 0 },
+  liq:  { label: "Liquid",              icon: "i-liquid",   opts: LIQUIDS },
+  fin:  { label: "Surface finish",      icon: "i-finish",   opts: FINISHES },
+  ang:  { label: "Airflow angle",       icon: "i-angle",    unit: "°", min: 0, max: 90, step: 5, dp: 0 },
+  stir: { label: "Stirring",            icon: "i-stir",     opts: STIRRING },
+  lid:  { label: "Lid position",        icon: "i-lid",      opts: LIDS },
+  ins:  { label: "Insulation",          icon: "i-insul",    opts: INSULATION },
+  dur:  { label: "Run length",          icon: "i-chart",    unit: "min", min: 10, max: 240, step: 5, dp: 0 }
+};
+
+/** Free (top) surface area in cm² — the surface the room actually sees. */
+const freeArea = (dia) => (Math.PI * Math.pow(dia / 2000, 2) * 1e4).toFixed(0);
+
+const EXPERIMENTS = [
+  {
+    key: "v", sym: "v", qty: "airflow velocity", scale: "ordinal",
+    title: "Effect of airflow velocity on cooling rate",
+    values: [0, 2, 4, 6], fmt: v => v === 0 ? "still air" : v + " m/s",
+    held: ["dist", "dia", "tamb", "t0"], preset: { dur: 60 }
+  },
+  {
+    key: "dia", sym: "A", qty: "exposed surface area", scale: "ordinal",
+    title: "Effect of surface area on cooling rate",
+    values: [60, 90, 120], fmt: d => freeArea(d) + " cm² free",
+    held: ["vol", "v", "tamb", "t0"], preset: { dur: 60 }
+  },
+  {
+    key: "vol", sym: "V", qty: "liquid volume", scale: "ordinal",
+    title: "Effect of volume on cooling rate",
+    values: [100, 200, 300, 400], fmt: v => v + " mL",
+    held: ["dia", "v", "tamb", "t0"], preset: { dur: 60 }
+  },
+  {
+    key: "mat", sym: "k<sub>w</sub>", qty: "container material", scale: "categorical",
+    title: "Effect of container material on cooling rate",
+    values: ["steel", "glass", "ceramic"], fmt: m => MATERIALS[m].name,
+    held: ["ins", "stir", "v", "tamb"], preset: { lid: "closed", v: 0, dur: 180 }
+  },
+  {
+    key: "t0", sym: "T₀", qty: "initial temperature", scale: "ordinal",
+    title: "Effect of initial liquid temperature on cooling rate",
+    values: [50, 60, 70, 80, 90], fmt: t => t + " °C",
+    held: ["tamb", "v", "vol", "lid"], preset: { lid: "closed", v: 2, dur: 120 }
+  },
+  {
+    key: "dist", sym: "d", qty: "fan distance", scale: "ordinal",
+    title: "Effect of fan distance on cooling rate",
+    values: [25, 50, 75, 100], fmt: d => d + " cm",
+    held: ["v", "ang", "tamb", "dia"], preset: { v: 5, dur: 60 }
+  },
+  {
+    key: "tamb", sym: "T<sub>a</sub>", qty: "ambient temperature", scale: "ordinal",
+    title: "Effect of ambient temperature on cooling rate",
+    values: [20, 25, 30, 35], fmt: t => t + " °C",
+    held: ["t0", "v", "vol", "lid"], preset: { lid: "closed", v: 2, dur: 120 }
+  },
+  {
+    key: "liq", sym: "c", qty: "liquid type", scale: "categorical",
+    title: "Effect of liquid type on cooling rate",
+    values: ["water", "saltwater", "oil", "glycerol"], fmt: l => LIQUIDS[l].name,
+    held: ["vol", "t0", "v", "lid"], preset: { t0: 70, dur: 60 }
+  },
+  {
+    key: "fin", sym: "ε", qty: "container colour", scale: "categorical",
+    title: "Effect of container colour on cooling rate",
+    values: ["black", "white", "silver"], fmt: f => FINISHES[f].name,
+    held: ["v", "tamb", "mat", "ins"], preset: { v: 0, lid: "closed", t0: 90, dur: 180 }
+  },
+  {
+    key: "ang", sym: "θ", qty: "airflow angle", scale: "ordinal",
+    title: "Effect of airflow angle on cooling rate",
+    values: [0, 30, 60, 90], fmt: a => a + "° off-axis",
+    held: ["v", "dist", "tamb", "dia"], preset: { v: 5, dist: 25, t0: 90, dur: 60 }
+  },
+  {
+    key: "stir", sym: "h<sub>in</sub>", qty: "stirring", scale: "ordinal",
+    title: "Effect of stirring on cooling rate",
+    values: ["none", "steady"], fmt: s => STIRRING[s].name,
+    held: ["v", "mat", "vol", "ins"], preset: { mat: "steel", lid: "closed", v: 3, t0: 90, dur: 90 }
+  },
+  {
+    key: "lid", sym: "φ", qty: "lid position", scale: "ordinal",
+    title: "Effect of lid position on cooling rate",
+    values: ["closed", "open"], fmt: l => LIDS[l].name,
+    held: ["t0", "v", "tamb", "vol"], preset: { v: 2, t0: 90, dur: 90 }
+  },
+  {
+    key: "ins", sym: "R", qty: "insulation", scale: "ordinal",
+    title: "Effect of insulation on cooling rate",
+    values: ["none", "sty1", "sty2", "sty3"], fmt: i => INSULATION[i].name,
+    held: ["mat", "tamb", "t0", "lid"], preset: { lid: "closed", v: 0, dur: 240 }
+  },
+  {
+    key: "shape", sym: "Γ", qty: "vessel shape", scale: "categorical",
+    title: "Effect of vessel shape on cooling rate",
+    values: ["conical", "bulb", "inverted"], fmt: s => SHAPES[s].name,
+    held: ["vol", "dia", "lid", "tamb"], preset: { v: 0, dur: 120 }
+  }
+];
+
+/* ============================================================
+   4. STATE
+   ============================================================ */
+const state = { exp: 0, params: { ...BASE }, off: new Set(), axis: "abs", active: null, playing: false, prog: 1 };
+let runs = [], mets = [];
+
+const $ = (s) => document.querySelector(s);
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function seriesColors(exp, n) {
+  if (exp.scale === "categorical") return ["--c1", "--c2", "--c3", "--c4", "--c5"].slice(0, n).map(css);
+  const ramp = ["--s1", "--s2", "--s3", "--s4", "--s5"];
+  return Array.from({ length: n }, (_, i) => css(ramp[n === 1 ? 0 : Math.round(i * 4 / (n - 1))]));
+}
+
+function activeIdx(exp) {
+  return exp.values.map((_, i) => i).filter(i => !state.off.has(i));
+}
+
+function build() {
+  const exp = EXPERIMENTS[state.exp];
+  const idx = activeIdx(exp);
+  const cols = seriesColors(exp, exp.values.length);
+  runs = idx.map(i => {
+    const p = { ...state.params, [exp.key]: exp.values[i] };
+    const r = simulate(p);
+    r.label = exp.fmt(exp.values[i], p);
+    r.color = cols[i];
+    r.vi = i;
+    return r;
+  });
+  mets = runs.map(metrics);
+  // default the apparatus to the last run — the extreme of the sweep, where the
+  // fan, wrap or open lid is actually visible on the schematic
+  if (state.active === null || state.active >= runs.length) state.active = runs.length - 1;
+}
+
+/* ============================================================
+   5. CHART
+   ============================================================ */
+const plot = $("#plotCanvas"), pctx = plot.getContext("2d");
+let PW = 0, PH = 0, box = { l: 52, r: 96, t: 16, b: 40 };
+let hover = null;
+
+function fitCanvas(cv, ctx, cssH) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = cv.clientWidth, h = cssH || cv.clientHeight;
+  const pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+  if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w, h };
+}
+
+function yValue(T, p) {
+  if (state.axis === "abs") return T;
+  return Math.max(T - p.tamb, 0.3);
+}
+
+function niceTicks(lo, hi, count) {
+  const raw = (hi - lo) / count, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const step = (norm >= 5 ? 10 : norm >= 2.5 ? 5 : norm >= 1.5 ? 2 : 1) * mag;
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(6));
+  return out;
+}
+
+function scales() {
+  const log = state.axis === "log";
+  let lo = Infinity, hi = -Infinity;
+  runs.forEach(r => { for (let i = 0; i < r.T.length; i++) { const y = yValue(r.T[i], r.p); if (y < lo) lo = y; if (y > hi) hi = y; } });
+  if (!runs.length) { lo = 0; hi = 1; }
+  if (state.axis === "abs") { lo = Math.min(lo, ...runs.map(r => r.p.tamb)); }
+  let ticks;
+  if (log) {
+    lo = Math.max(lo, 0.3); const l0 = Math.log10(lo * 0.85), l1 = Math.log10(hi * 1.15);
+    ticks = [];
+    for (let e = Math.floor(l0); e <= Math.ceil(l1); e++)
+      for (const m of [1, 2, 5]) { const v = m * Math.pow(10, e); if (v >= Math.pow(10, l0) && v <= Math.pow(10, l1)) ticks.push(v); }
+    return { lo: Math.pow(10, l0), hi: Math.pow(10, l1), ticks, log };
+  }
+  const pad = (hi - lo) * 0.08 || 1;
+  lo = Math.max(0, lo - pad * 0.6); hi = hi + pad;
+  ticks = niceTicks(lo, hi, 5);
+  return { lo, hi, ticks, log };
+}
+
+function drawPlot() {
+  const d = fitCanvas(plot, pctx); PW = d.w; PH = d.h;
+  const ink = css("--ink"), ink2 = css("--ink-2"), ink3 = css("--ink-3");
+  const grid = css("--line-soft"), axis = css("--line"), surf = css("--surface-1");
+  const narrow = PW < 520;
+  box = { l: narrow ? 40 : 50, r: narrow ? 16 : 104, t: 14, b: 38 };
+  const iw = PW - box.l - box.r, ih = PH - box.t - box.b;
+  pctx.clearRect(0, 0, PW, PH);
+  if (!runs.length || iw <= 10) return;
+
+  const sc = scales();
+  const durMin = state.params.dur;
+  const X = (tmin) => box.l + iw * tmin / durMin;
+  const Y = (v) => sc.log
+    ? box.t + ih * (1 - (Math.log10(v) - Math.log10(sc.lo)) / (Math.log10(sc.hi) - Math.log10(sc.lo)))
+    : box.t + ih * (1 - (v - sc.lo) / (sc.hi - sc.lo));
+
+  pctx.font = `11px ${css("--font-mono") || "monospace"}`;
+  pctx.textBaseline = "middle";
+
+  // horizontal grid + y labels
+  pctx.lineWidth = 1;
+  sc.ticks.forEach(v => {
+    const y = Math.round(Y(v)) + .5;
+    if (y < box.t - 1 || y > box.t + ih + 1) return;
+    pctx.strokeStyle = grid; pctx.beginPath(); pctx.moveTo(box.l, y); pctx.lineTo(box.l + iw, y); pctx.stroke();
+    pctx.fillStyle = ink3; pctx.textAlign = "right";
+    pctx.fillText(sc.log ? (v >= 1 ? v : v.toFixed(1)) : v, box.l - 8, y);
+  });
+
+  // x ticks
+  const xt = niceTicks(0, durMin, narrow ? 4 : 6);
+  pctx.textAlign = "center"; pctx.textBaseline = "top";
+  xt.forEach(t => {
+    if (t > durMin) return;
+    const x = Math.round(X(t)) + .5;
+    pctx.strokeStyle = grid; pctx.beginPath(); pctx.moveTo(x, box.t); pctx.lineTo(x, box.t + ih); pctx.stroke();
+    pctx.fillStyle = ink3; pctx.fillText(t, x, box.t + ih + 9);
+  });
+
+  // axes
+  pctx.strokeStyle = axis; pctx.beginPath();
+  pctx.moveTo(box.l + .5, box.t); pctx.lineTo(box.l + .5, box.t + ih + .5); pctx.lineTo(box.l + iw, box.t + ih + .5);
+  pctx.stroke();
+
+  // axis titles — the rotated one needs a gutter the narrow layout cannot spare,
+  // so there the segmented control above the plot names the axis instead
+  pctx.fillStyle = ink3; pctx.textAlign = "right"; pctx.textBaseline = "top";
+  pctx.fillText("minutes", box.l + iw, box.t + ih + 22);
+  if (!narrow) {
+    pctx.save(); pctx.translate(12, box.t + ih / 2); pctx.rotate(-Math.PI / 2);
+    pctx.textAlign = "center"; pctx.textBaseline = "top";
+    pctx.fillText(state.axis === "abs" ? "temperature  °C" : "excess temperature  K", 0, 0);
+    pctx.restore();
+  }
+
+  // ambient reference line — only meaningful when every run shares one room
+  const sameAmb = runs.every(r => r.p.tamb === runs[0].p.tamb) ? runs[0].p.tamb : null;
+  if (state.axis === "abs" && sameAmb !== null && sameAmb >= sc.lo && sameAmb <= sc.hi) {
+    const y = Math.round(Y(sameAmb)) + .5;
+    pctx.save(); pctx.setLineDash([4, 4]); pctx.strokeStyle = ink3; pctx.globalAlpha = .7;
+    pctx.beginPath(); pctx.moveTo(box.l, y); pctx.lineTo(box.l + iw, y); pctx.stroke(); pctx.restore();
+    pctx.fillStyle = ink3; pctx.textAlign = "left"; pctx.textBaseline = "bottom";
+    pctx.fillText("ambient", box.l + 6, y - 3);
+  }
+
+  // curves
+  const nPts = runs[0].T.length;
+  const cut = Math.max(2, Math.round(nPts * state.prog));
+  const stride = Math.max(1, Math.floor(nPts / (iw * 2)));
+  pctx.lineWidth = 2; pctx.lineJoin = "round"; pctx.lineCap = "round";
+  runs.forEach((r, ri) => {
+    pctx.strokeStyle = r.color;
+    pctx.globalAlpha = (state.active === ri || runs.length === 1) ? 1 : .82;
+    pctx.beginPath();
+    for (let i = 0; i < cut; i += stride) pctx[i === 0 ? "moveTo" : "lineTo"](X(i * DT / 60), Y(yValue(r.T[i], r.p)));
+    pctx.lineTo(X((cut - 1) * DT / 60), Y(yValue(r.T[cut - 1], r.p)));
+    pctx.stroke();
+    pctx.globalAlpha = 1;
+    if (state.prog < 1) {
+      const x = X((cut - 1) * DT / 60), y = Y(yValue(r.T[cut - 1], r.p));
+      pctx.fillStyle = surf; pctx.beginPath(); pctx.arc(x, y, 5, 0, 7); pctx.fill();
+      pctx.fillStyle = r.color; pctx.beginPath(); pctx.arc(x, y, 3.2, 0, 7); pctx.fill();
+    }
+  });
+
+  // selective direct labels at the endpoints
+  if (!narrow && state.prog >= 1) {
+    const lab = runs.map((r, ri) => ({ ri, y: Y(yValue(r.T[nPts - 1], r.p)), text: r.label, color: r.color }))
+      .sort((a, b) => a.y - b.y);
+    for (let i = 1; i < lab.length; i++) if (lab[i].y - lab[i - 1].y < 15) lab[i].y = lab[i - 1].y + 15;
+    const overflow = lab.length ? lab[lab.length - 1].y - (box.t + ih) : 0;
+    if (overflow > 0) lab.forEach(l => l.y -= overflow);
+    pctx.textAlign = "left"; pctx.textBaseline = "middle";
+    const x = box.l + iw + 8, avail = PW - (x + 12) - 4;
+    lab.forEach(l => {
+      pctx.fillStyle = l.color; pctx.beginPath(); pctx.roundRect(x, l.y - 3, 7, 6, 2); pctx.fill();
+      pctx.fillStyle = state.active === l.ri ? ink : ink2;
+      pctx.font = `${state.active === l.ri ? "600 " : ""}11px ${css("--font-mono") || "monospace"}`;
+      // the legend below carries the full name, so trimming here loses nothing
+      let t = l.text;
+      if (pctx.measureText(t).width > avail) {
+        while (t.length > 1 && pctx.measureText(t + "…").width > avail) t = t.slice(0, -1);
+        t += "…";
+      }
+      pctx.fillText(t, x + 12, l.y);
+    });
+  }
+
+  // hover crosshair
+  if (hover !== null && state.prog >= 1) {
+    const i = hover, x = Math.round(X(i * DT / 60)) + .5;
+    pctx.strokeStyle = axis; pctx.beginPath(); pctx.moveTo(x, box.t); pctx.lineTo(x, box.t + ih); pctx.stroke();
+    runs.forEach(r => {
+      const y = Y(yValue(r.T[i], r.p));
+      pctx.fillStyle = surf; pctx.beginPath(); pctx.arc(x, y, 5.4, 0, 7); pctx.fill();
+      pctx.fillStyle = r.color; pctx.beginPath(); pctx.arc(x, y, 3.4, 0, 7); pctx.fill();
+    });
+  }
+}
+
+function moveTip(ev) {
+  if (!runs.length) return;
+  const rect = plot.getBoundingClientRect();
+  const x = ev.clientX - rect.left, iw = PW - box.l - box.r;
+  if (x < box.l - 6 || x > box.l + iw + 6) return hideTip();
+  const frac = Math.min(1, Math.max(0, (x - box.l) / iw));
+  hover = Math.round(frac * (runs[0].T.length - 1));
+  const tip = $("#tip");
+  tip.innerHTML = `<div class="tip-t">${(hover * DT / 60).toFixed(1)} min</div>` +
+    runs.map(r => `<div class="tip-row"><span class="swatch" style="background:${r.color}"></span>${r.label}<b>${r.T[hover].toFixed(1)}°</b></div>`).join("");
+  tip.classList.add("on");
+  const px = box.l + iw * hover / (runs[0].T.length - 1);
+  const w = tip.offsetWidth;
+  tip.style.left = Math.min(Math.max(px + 14, 8), PW - w - 8) + "px";
+  tip.style.top = box.t + 12 + "px";
+  drawPlot();
+}
+function hideTip() { hover = null; $("#tip").classList.remove("on"); drawPlot(); }
+
+plot.addEventListener("pointermove", moveTip);
+plot.addEventListener("pointerleave", hideTip);
+plot.addEventListener("pointerdown", moveTip);
+
+/* ============================================================
+   6. APPARATUS
+   ============================================================ */
+const rig = $("#rigCanvas"), rctx = rig.getContext("2d");
+const SW = 336, SH = 292;
+let spin = 0, wisp = 0;
+
+function mix(a, b, t) {
+  const pa = [parseInt(a.slice(1, 3), 16), parseInt(a.slice(3, 5), 16), parseInt(a.slice(5, 7), 16)];
+  const pb = [parseInt(b.slice(1, 3), 16), parseInt(b.slice(3, 5), 16), parseInt(b.slice(5, 7), 16)];
+  return `rgb(${pa.map((v, i) => Math.round(v + (pb[i] - v) * t)).join(",")})`;
+}
+function heatColor(T, p) {
+  const f = Math.max(0, Math.min(1, (T - p.tamb) / Math.max(p.t0 - p.tamb, 1)));
+  return f < .5 ? mix("#6C8FA8", "#D9A03C", f * 2) : mix("#D9A03C", "#C1381C", (f - .5) * 2);
+}
+
+function vesselPath(ctx, cx, base, cw, h, shape, pad) {
+  pad = pad || 0;
+  const sh = SHAPES[shape] || SHAPES.beaker;
+  if (sh.straight) {
+    ctx.beginPath();
+    ctx.roundRect(cx - cw / 2 - pad, base - h - pad, cw + pad * 2, h + pad * 2, [3, 3, 7, 7]);
+    return;
+  }
+  const N = 64;
+  const X = (u, s) => cx + s * (cw / 2 * sh.f(u) + pad);
+  const Y = (u) => base + pad - u * (h + pad * 2);
+  ctx.beginPath();
+  ctx.moveTo(X(0, -1), Y(0));
+  for (let i = 1; i <= N; i++) ctx.lineTo(X(i / N, -1), Y(i / N));
+  ctx.lineTo(X(1, 1), Y(1));
+  for (let i = N - 1; i >= 0; i--) ctx.lineTo(X(i / N, 1), Y(i / N));
+  ctx.closePath();
+}
+
+function drawRig(T) {
+  const d = fitCanvas(rig, rctx, rig.clientWidth * SH / SW);
+  const s = d.w / SW;
+  rctx.save(); rctx.scale(s, s);
+  rctx.clearRect(0, 0, SW, SH);
+
+  const p = runs[state.active] ? runs[state.active].p : state.params;
+  const ink = css("--ink"), ink3 = css("--ink-3"), line = css("--line"), surf = css("--surface-1");
+  const g = geometry(p);
+  const mat = MATERIALS[p.mat], fin = FINISHES[p.fin], ins = INSULATION[p.ins], lid = LIDS[p.lid];
+
+  const bench = 236;
+  rctx.strokeStyle = line; rctx.lineWidth = 1;
+  rctx.beginPath(); rctx.moveTo(14, bench + .5); rctx.lineTo(SW - 14, bench + .5); rctx.stroke();
+  rctx.globalAlpha = .35;
+  for (let x = 16; x < SW - 14; x += 9) { rctx.beginPath(); rctx.moveTo(x, bench + 2); rctx.lineTo(x - 5, bench + 8); rctx.stroke(); }
+  rctx.globalAlpha = 1;
+
+  // cup geometry in scene units; with no fan the cup takes the middle of the bench
+  const cw = 50 + (p.dia - 50) / 90 * 66;              // 50 → 116 px
+  // drawn to its true slenderness, so a tall flask reads as one; the liquid always
+  // stands at FILL of the wall, which is how the geometry was solved
+  const wallH = Math.max(48, Math.min(178, cw * g.Hv / (2 * g.r)));
+  const fillH = FILL * wallH;
+  const cx = p.v > 0 ? 230 : 178, top = bench - wallH, fillTop = bench - fillH;
+  const halfAt = (u) => cw / 2 * SHAPES[p.shape].f(Math.max(0, Math.min(1, u)));
+  const wTop = halfAt(1), wFill = halfAt(FILL);
+
+  // ---- fan ----
+  if (p.v > 0) {
+    const fx = Math.max(46, cx - cw / 2 - (26 + (p.dist - 5) / 115 * 132));
+    const fy = bench - 74;
+    const ar = -p.ang * Math.PI / 180;
+
+    const R = 27;
+    const fore = 0.34 + 0.66 * Math.sin(Math.abs(ar));   // 0.34 edge-on -> 1.0 face-on
+
+    // streamlines leaving the guard, fainter and shorter toward the jet's edge
+    rctx.save();
+    rctx.strokeStyle = css("--accent"); rctx.lineWidth = 1.4; rctx.lineCap = "round";
+    rctx.setLineDash([9, 7]); rctx.lineDashOffset = -wisp * 26;
+    const x0 = fx + fore * R + 5, reach = cx - cw / 2 - x0;
+    for (let i = -2; i <= 2; i++) {
+      const edge = Math.abs(i) / 2;
+      rctx.globalAlpha = .55 - edge * .25;
+      rctx.beginPath();
+      const y0 = fy + i * 10, span = reach * (1 - edge * .18);
+      for (let t = 0; t <= 1.001; t += 0.05) {
+        const x = x0 + span * t;
+        const y = y0 + Math.sin(ar) * span * t
+                + Math.sin(t * 7 + wisp * 2 + i) * 2.4 * t
+                + i * 3.5 * t * t;
+        t === 0 ? rctx.moveTo(x, y) : rctx.lineTo(x, y);
+      }
+      rctx.stroke();
+    }
+    rctx.restore();
+
+    // ---- fan: a guard cage with four swept blades, foreshortened by aim angle.
+    // Square-on to the cup we see the disc edge-on; turned away it rotates toward us.
+    rctx.save();
+    rctx.translate(fx, fy);
+    rctx.scale(fore, 1);
+    const lw = (v) => v / Math.sqrt(fore);               // keep strokes even under squash
+
+    // blades - swept crescents, fading toward a blur as the fan spins up
+    const blades = 4, blur = Math.min(1, p.v / 8);
+    rctx.fillStyle = css("--accent");
+    rctx.globalAlpha = .32 - blur * .13;
+    for (let b = 0; b < blades; b++) {
+      const a = spin + b * (Math.PI * 2 / blades), sw = 0.62 + blur * 0.5;
+      rctx.beginPath();
+      rctx.moveTo(0, 0);
+      rctx.quadraticCurveTo(Math.cos(a - .18) * R * .78, Math.sin(a - .18) * R * .78,
+                            Math.cos(a) * R * .92, Math.sin(a) * R * .92);
+      rctx.quadraticCurveTo(Math.cos(a + sw) * R * .72, Math.sin(a + sw) * R * .72, 0, 0);
+      rctx.fill();
+    }
+    rctx.globalAlpha = 1;
+
+    // guard cage
+    rctx.strokeStyle = ink3;
+    rctx.lineWidth = lw(1.7);
+    rctx.beginPath(); rctx.arc(0, 0, R, 0, 7); rctx.stroke();
+    rctx.globalAlpha = .45; rctx.lineWidth = lw(1);
+    rctx.beginPath(); rctx.arc(0, 0, R * .66, 0, 7); rctx.stroke();
+    rctx.beginPath(); rctx.arc(0, 0, R * .34, 0, 7); rctx.stroke();
+    for (let g = 0; g < 8; g++) {
+      const a = g * Math.PI / 4;
+      rctx.beginPath();
+      rctx.moveTo(Math.cos(a) * R * .2, Math.sin(a) * R * .2);
+      rctx.lineTo(Math.cos(a) * R, Math.sin(a) * R);
+      rctx.stroke();
+    }
+    rctx.globalAlpha = 1;
+
+    // hub
+    rctx.fillStyle = surf; rctx.strokeStyle = ink3; rctx.lineWidth = lw(1.5);
+    rctx.beginPath(); rctx.arc(0, 0, R * .19, 0, 7); rctx.fill(); rctx.stroke();
+    rctx.restore();
+
+    // stand: neck, column, weighted base
+    rctx.strokeStyle = ink3; rctx.lineWidth = 1.7; rctx.lineCap = "round";
+    rctx.beginPath();
+    rctx.moveTo(fx, fy + R * .8); rctx.lineTo(fx, bench - 6);
+    rctx.stroke();
+    rctx.lineWidth = 2.4;
+    rctx.beginPath();
+    rctx.moveTo(fx - 14, bench - 4); rctx.lineTo(fx + 14, bench - 4);
+    rctx.stroke();
+    rctx.lineCap = "butt";
+    // speed tag
+    rctx.fillStyle = ink3; rctx.font = "10px " + (css("--font-mono") || "monospace");
+    rctx.textAlign = "center"; rctx.textBaseline = "top";
+    rctx.fillText(p.v.toFixed(1) + " m/s", fx, bench + 6);
+  }
+
+  // ---- insulation sleeve ----
+  if (ins.R > 0) {
+    const tW = 4 + ins.mm * 0.32;
+    rctx.save();
+    rctx.strokeStyle = css("--accent"); rctx.globalAlpha = .45; rctx.lineWidth = 1;
+    vesselPath(rctx, cx, bench, cw, wallH, p.shape, tW); rctx.stroke();
+    rctx.save(); vesselPath(rctx, cx, bench, cw, wallH, p.shape, tW); rctx.clip();
+    for (let x = cx - cw - 40; x < cx + cw + 40; x += 6) { rctx.beginPath(); rctx.moveTo(x, top - 6); rctx.lineTo(x + 40, top + wallH + 34); rctx.stroke(); }
+    rctx.restore();
+    rctx.restore();
+  }
+
+  // ---- cup ----
+  rctx.save();
+  vesselPath(rctx, cx, bench, cw, wallH, p.shape);
+  rctx.fillStyle = mix(mat.shell, fin.swatch, 0.55); rctx.fill();
+  rctx.clip();
+  // liquid
+  rctx.fillStyle = heatColor(T, p);
+  rctx.globalAlpha = .92;
+  rctx.fillRect(cx - cw / 2, fillTop, cw, fillH);
+  rctx.globalAlpha = 1;
+  // liquid tint band for the fluid's own colour
+  rctx.fillStyle = LIQUIDS[p.liq].tint; rctx.globalAlpha = .22;
+  rctx.fillRect(cx - cw / 2, fillTop, cw, fillH);
+  rctx.globalAlpha = 1;
+  // meniscus
+  rctx.strokeStyle = "rgba(255,255,255,.5)"; rctx.lineWidth = 1.4;
+  rctx.beginPath(); rctx.moveTo(cx - wFill, fillTop + .5); rctx.lineTo(cx + wFill, fillTop + .5); rctx.stroke();
+  rctx.restore();
+  rctx.strokeStyle = ink; rctx.globalAlpha = .55; rctx.lineWidth = 1.6;
+  vesselPath(rctx, cx, bench, cw, wallH, p.shape); rctx.stroke();
+  rctx.globalAlpha = 1;
+
+  // shape tag — the schematic alone cannot say which flask this is
+  if (!SHAPES[p.shape].straight) {
+    rctx.fillStyle = ink3; rctx.font = "10px " + (css("--font-mono") || "monospace");
+    rctx.textAlign = "center"; rctx.textBaseline = "top";
+    rctx.fillText(SHAPES[p.shape].name.toLowerCase(), cx, bench + 6);
+  }
+
+  // ---- stirring swirl ----
+  if (p.stir !== "none") {
+    const turns = { occasional: 1, steady: 2, vigorous: 3 }[p.stir];
+    rctx.save();
+    rctx.strokeStyle = "rgba(255,255,255,.75)"; rctx.lineWidth = 1.3; rctx.lineCap = "round";
+    for (let a = 0; a < turns; a++) {
+      rctx.beginPath();
+      const yy = fillTop + 10 + a * (fillH - 16) / turns;
+      const hw = Math.max(7, halfAt((bench - yy) / wallH));
+      for (let t = 0; t <= 1.001; t += .05) {
+        const x = cx - hw + 5 + t * (hw * 2 - 10);
+        const y = yy + Math.sin(t * 6.3 + spin * 1.6 + a) * 3.4;
+        t === 0 ? rctx.moveTo(x, y) : rctx.lineTo(x, y);
+      }
+      rctx.stroke();
+    }
+    rctx.restore();
+    // the spoon only appears when there is an opening for it to pass through;
+    // with the lid on, the swirl alone carries the message
+    if (lid.open > 0) {
+      rctx.strokeStyle = ink3; rctx.lineWidth = 1.6;
+      rctx.beginPath();
+      rctx.moveTo(cx + wTop * .5 + Math.sin(spin) * 4, top - 22);
+      rctx.lineTo(cx + wTop * .34 + Math.sin(spin) * 3, fillTop + fillH * .55);
+      rctx.stroke();
+    }
+  }
+
+  // ---- lid ----
+  if (lid.open < 1) {
+    rctx.save();
+    rctx.strokeStyle = ink; rctx.globalAlpha = .6; rctx.lineWidth = 2.2; rctx.lineCap = "round";
+    rctx.translate(cx, top - 2);
+    rctx.rotate(lid.open * 0.42);
+    rctx.beginPath(); rctx.moveTo(-wTop - 4, 0); rctx.lineTo(wTop + 4, 0); rctx.stroke();
+    rctx.lineWidth = 1.6;
+    rctx.beginPath(); rctx.moveTo(0, 0); rctx.lineTo(0, -7); rctx.stroke();
+    rctx.beginPath(); rctx.arc(0, -9, 2.6, 0, 7); rctx.stroke();
+    rctx.restore();
+  }
+
+  // ---- steam ----
+  const excess = T - p.tamb;
+  if (lid.open > 0 && excess > 6 && LIQUIDS[p.liq].evap > 0.1) {
+    rctx.save();
+    rctx.strokeStyle = ink3; rctx.lineWidth = 1.5; rctx.lineCap = "round";
+    const strength = Math.min(1, excess / 50) * lid.open * Math.min(1, LIQUIDS[p.liq].evap);
+    for (let i = 0; i < 3; i++) {
+      rctx.globalAlpha = .5 * strength * (1 - i * .22);
+      rctx.beginPath();
+      const bx = cx + (i - 1) * wTop * 0.62;
+      for (let t = 0; t <= 1.001; t += .08) {
+        const y = top - 8 - t * 44;
+        const x = bx + Math.sin(t * 5 + wisp * 1.6 + i * 2) * 7 * t;
+        t === 0 ? rctx.moveTo(x, y) : rctx.lineTo(x, y);
+      }
+      rctx.stroke();
+    }
+    rctx.restore();
+  }
+
+  // ---- thermometer ----
+  const tx = SW - 22, ty0 = 44, ty1 = bench - 26;
+  rctx.strokeStyle = line; rctx.lineWidth = 1;
+  rctx.beginPath(); rctx.roundRect(tx - 5.5, ty0 - 5.5, 11, ty1 - ty0 + 11, 6); rctx.stroke();
+  const frac = Math.max(0, Math.min(1, (T - p.tamb) / Math.max(p.t0 - p.tamb, 1)));
+  const fy = ty1 - (ty1 - ty0) * frac;
+  rctx.fillStyle = heatColor(T, p);
+  rctx.beginPath(); rctx.roundRect(tx - 3, fy, 6, ty1 - fy + 3, 3); rctx.fill();
+  rctx.beginPath(); rctx.arc(tx, ty1 + 5, 6.5, 0, 7); rctx.fill();
+  rctx.fillStyle = ink3; rctx.font = "9px " + (css("--font-mono") || "monospace");
+  rctx.textAlign = "right"; rctx.textBaseline = "middle";
+  rctx.fillText(p.t0 + "°", tx - 10, ty0);
+  rctx.fillText(p.tamb + "°", tx - 10, ty1);
+
+  // ---- ambient badge ----
+  rctx.fillStyle = ink3; rctx.font = "10px " + (css("--font-mono") || "monospace");
+  rctx.textAlign = "left"; rctx.textBaseline = "top";
+  rctx.fillText("room  " + p.tamb + " °C", 16, 16);
+  rctx.fillText(MATERIALS[p.mat].name.toLowerCase(), 16, 32);
+  rctx.fillText(LIQUIDS[p.liq].name.toLowerCase() + "  " + p.vol + " mL", 16, 48);
+
+  rctx.restore();
+}
+
+/* ============================================================
+   7. RENDER — nav, controls, table, legend
+   ============================================================ */
+function renderNav() {
+  $("#nav").innerHTML = EXPERIMENTS.map((e, i) => `
+    <li><button type="button" data-exp="${i}" aria-current="${i === state.exp}">
+      <span class="sym">${e.sym}</span><span>${e.qty.replace(/^./, c => c.toUpperCase())}</span>
+    </button></li>`).join("");
+}
+
+function renderHead() {
+  const e = EXPERIMENTS[state.exp];
+  $("#expIndex").textContent = `Experiment ${String(state.exp + 1).padStart(2, "0")} of ${EXPERIMENTS.length}`;
+  $("#expSym").innerHTML = e.sym;
+  $("#expQty").textContent = e.qty;
+  $("#expTitle").textContent = e.title;
+  $("#sweepTitle").textContent = PARAM[e.key].label;
+  $("#thVar").textContent = PARAM[e.key].label;
+}
+
+function renderChips() {
+  const e = EXPERIMENTS[state.exp];
+  const cols = seriesColors(e, e.values.length);
+  $("#sweepChips").innerHTML = e.values.map((v, i) => `
+    <button class="chip" type="button" data-chip="${i}" aria-pressed="${!state.off.has(i)}">
+      <span class="swatch" style="background:${cols[i]}"></span>${e.fmt(v, state.params)}
+    </button>`).join("");
+}
+
+function fieldHTML(key) {
+  const P = PARAM[key], val = state.params[key];
+  const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#${P.icon}"/></svg>`;
+  if (P.opts) {
+    const opts = Object.entries(P.opts).map(([k, o]) =>
+      `<option value="${k}"${k === val ? " selected" : ""}>${o.name}</option>`).join("");
+    return `<div class="field">
+      <div class="field-top"><label for="f-${key}">${icon}${P.label}</label></div>
+      <select id="f-${key}" data-key="${key}">${opts}</select></div>`;
+  }
+  return `<div class="field">
+    <div class="field-top"><label for="f-${key}">${icon}${P.label}</label>
+      <span class="field-val">${(+val).toFixed(P.dp)}<span>${P.unit}</span></span></div>
+    <input type="range" id="f-${key}" data-key="${key}" min="${P.min}" max="${P.max}" step="${P.step}"
+      value="${val}" aria-label="${P.label}"></div>`;
+}
+
+function renderFields() {
+  const e = EXPERIMENTS[state.exp];
+  const keys = [...e.held.filter(k => k !== e.key), "dur"];
+  $("#heldFields").innerHTML = keys.map(fieldHTML).join("");
+}
+
+function renderResults() {
+  const e = EXPERIMENTS[state.exp];
+  $("#resultsBody").innerHTML = runs.map((r, i) => {
+    const m = mets[i];
+    return `<tr data-row="${i}" class="${i === state.active ? "is-active" : ""}">
+      <td><span class="swatch" style="background:${r.color}"></span>${r.label}</td>
+      <td>${m.k ? m.k.toFixed(4) : "—"}</td>
+      <td>${m.tau ? m.tau.toFixed(1) : "—"}</td>
+      <td>${m.half ? m.half.toFixed(1) : "> " + state.params.dur}</td>
+      <td>${m.rate0.toFixed(2)} °C/min</td>
+      <td>${m.tEnd.toFixed(1)} °C</td>
+    </tr>`;
+  }).join("");
+
+  $("#legend").innerHTML = runs.map((r, i) =>
+    `<span class="legend-item"><span class="swatch" style="background:${r.color}"></span>${r.label}</span>`).join("");
+}
+
+function renderReadout() {
+  const r = runs[state.active];
+  if (!r) return;
+  const i = Math.min(r.T.length - 1, Math.round((r.T.length - 1) * state.prog));
+  $("#roTime").innerHTML = (i * DT / 60).toFixed(1) + "<span>min</span>";
+  $("#roTemp").innerHTML = r.T[i].toFixed(1) + "<span>°C</span>";
+  $("#roFlux").innerHTML = r.Q[i].toFixed(1) + "<span>W</span>";
+  return r.T[i];
+}
+
+/** Recompute + repaint everything except the held-constant inputs, so a slider
+    being dragged is never torn out from under the pointer. */
+function refresh() {
+  build();
+  renderChips(); renderResults(); drawPlot();
+  const T = renderReadout(); drawRig(T ?? state.params.t0);
+}
+function renderAll() { renderFields(); refresh(); }
+
+/* ============================================================
+   8. EVENTS
+   ============================================================ */
+function selectExperiment(i, scroll) {
+  state.exp = i; state.off.clear(); state.active = null;
+  state.params = { ...BASE, ...(EXPERIMENTS[i].preset || {}) };
+  renderNav(); renderHead(); resetPlay(); renderAll();
+  if (scroll) document.querySelector("main").scrollIntoView({
+    behavior: reducedMotion() ? "auto" : "smooth", block: "start"
+  });
+}
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+$("#nav").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-exp]"); if (!b) return;
+  selectExperiment(+b.dataset.exp, true);
+});
+
+$("#sweepChips").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-chip]"); if (!b) return;
+  const i = +b.dataset.chip;
+  if (state.off.has(i)) state.off.delete(i);
+  else if (EXPERIMENTS[state.exp].values.length - state.off.size > 1) state.off.add(i);
+  state.active = null; refresh();
+});
+
+$("#heldFields").addEventListener("input", ev => {
+  const el = ev.target, k = el.dataset.key; if (!k) return;
+  const P = PARAM[k];
+  state.params[k] = P.opts ? el.value : +el.value;
+  if (!P.opts) {
+    const out = el.previousElementSibling.querySelector(".field-val");
+    if (out) out.innerHTML = (+el.value).toFixed(P.dp) + `<span>${P.unit}</span>`;
+  }
+  refresh();
+});
+
+$("#resultsBody").addEventListener("click", ev => {
+  const tr = ev.target.closest("tr[data-row]"); if (!tr) return;
+  state.active = +tr.dataset.row; renderResults(); drawPlot(); drawRig(renderReadout());
+});
+
+document.querySelectorAll("[data-axis]").forEach(b => b.addEventListener("click", () => {
+  state.axis = b.dataset.axis;
+  document.querySelectorAll("[data-axis]").forEach(o => o.setAttribute("aria-pressed", o === b));
+  drawPlot();
+}));
+
+/* transport */
+let raf = null, last = 0;
+function setPlayIcon() { $("#playIcon").setAttribute("href", state.playing ? "#i-pause" : "#i-play"); }
+function resetPlay() { state.playing = false; state.prog = 1; setPlayIcon(); }
+
+$("#playBtn").addEventListener("click", () => {
+  if (state.prog >= 1 && !state.playing) state.prog = 0;
+  state.playing = !state.playing; setPlayIcon(); last = performance.now();
+});
+$("#resetBtn").addEventListener("click", () => { state.prog = 1; state.playing = false; setPlayIcon(); renderAll(); });
+
+
+/* ============================================================
+   9. ANIMATION LOOP
+   ============================================================ */
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+  const p = runs[state.active] ? runs[state.active].p : state.params;
+  if (!reducedMotion()) { spin += dt * (2 + p.v * 1.6); wisp += dt; }
+  if (state.playing) {
+    state.prog += dt / 9;                 // a full run reads in ~9 s
+    if (state.prog >= 1) { state.prog = 1; state.playing = false; setPlayIcon(); }
+    drawPlot();
+  }
+  drawRig(renderReadout() ?? state.params.t0);
+  raf = requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   10. BOOT
+   ============================================================ */
+let rz;
+addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(drawPlot, 90); });
+
+selectExperiment(0, false);
+last = performance.now();
+raf = requestAnimationFrame(loop);
+</script>
+</body>
+</html>
