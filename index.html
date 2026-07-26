@@ -42,12 +42,6 @@
           0 2px 4px rgba(42, 29, 18, 0.07),
           0 18px 40px -18px rgba(42, 29, 18, 0.32);
 
-        --s1: #c39a62;
-        --s2: #a87b42;
-        --s3: #8a5c2c;
-        --s4: #6b441e;
-        --s5: #4e3014;
-
         --c1: #2a78d6;
         --c2: #e23b2e;
         --c3: #1baf7a;
@@ -90,11 +84,6 @@
         --shadow-lift:
           0 2px 4px rgba(0, 0, 0, 0.5), 0 18px 40px -18px rgba(0, 0, 0, 0.72);
 
-        --s1: #3c6b74;
-        --s2: #4e96a1;
-        --s3: #69bcc6;
-        --s4: #97d9e0;
-        --s5: #c9eff3;
         --c1: #2be7ff;
         --c2: #ff4d5e;
         --c3: #4bea5a;
@@ -122,15 +111,6 @@
         outline: 2px solid var(--accent);
         outline-offset: 2px;
         border-radius: 3px;
-      }
-
-      .sr {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
       }
 
       .app {
@@ -445,12 +425,6 @@
         width: 15px;
         height: 15px;
       }
-      .iconbtn.wide {
-        width: auto;
-        padding: 0 11px;
-        font: inherit;
-        font-size: 12px;
-      }
       .iconbtn[aria-pressed="true"] {
         background: var(--accent-wash);
         border-color: var(--accent);
@@ -645,8 +619,13 @@
       .chip[aria-pressed="true"] .swatch {
         opacity: 1;
       }
-      .chip:hover {
+      .chip:hover:not([aria-disabled="true"]) {
         border-color: var(--accent);
+      }
+      /* The last visible series can't be switched off. It stays focusable and
+         fully lit — it is the active one — but drops the interactive cue. */
+      .chip[aria-disabled="true"] {
+        cursor: default;
       }
 
       .field {
@@ -771,9 +750,19 @@
       tbody td:first-child {
         font-family: var(--font-body);
         color: var(--ink-2);
+      }
+      .row-pick {
         display: flex;
         align-items: center;
         gap: 9px;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
       }
       tbody tr:last-child td {
         border-bottom: 0;
@@ -1029,7 +1018,7 @@
         transition-duration: 0.16s;
         transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
       }
-      .chip:active,
+      .chip:not([aria-disabled="true"]):active,
       .seg button:active {
         transform: scale(0.95);
       }
@@ -1336,8 +1325,12 @@
               </div>
             </div>
             <div class="chart-body">
-              <canvas id="plotCanvas"></canvas>
-              <div class="tip" id="tip" role="status"></div>
+              <canvas
+                id="plotCanvas"
+                role="img"
+                aria-label="Cooling curves"
+              ></canvas>
+              <div class="tip" id="tip" aria-hidden="true"></div>
             </div>
             <div class="legend" id="legend"></div>
           </div>
@@ -1707,7 +1700,6 @@
 
         return {
           total: Qside + Qbase + Qtop + Qevap,
-          evap: Qevap,
           C: liq.rho * g.V * liq.c,
         };
       }
@@ -1738,7 +1730,7 @@
       }
 
       function metrics(run) {
-        const { T, Q, p } = run,
+        const { T, p } = run,
           dT0 = p.t0 - p.tamb;
         let half = null;
         const target = p.tamb + dT0 / 2;
@@ -1758,7 +1750,6 @@
           tau: half ? half / Math.LN2 : null,
           rate0,
           tEnd: T[T.length - 1],
-          q0: Q[0],
         };
       }
 
@@ -2044,7 +2035,7 @@
       const css = (n) =>
         getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
-      function seriesColors(exp, n) {
+      function seriesColors(n) {
         const pal = ["--c1", "--c2", "--c3", "--c4", "--c5", "--c6"];
         return pal.slice(0, n).map(css);
       }
@@ -2056,7 +2047,7 @@
       function build() {
         const exp = EXPERIMENTS[state.exp];
         const idx = activeIdx(exp);
-        const cols = seriesColors(exp, exp.values.length);
+        const cols = seriesColors(exp.values.length);
         runs = idx.map((i) => {
           const p = { ...state.params, [exp.key]: exp.values[i] };
           const r = simulate(p);
@@ -2384,10 +2375,17 @@
             )
             .join("");
         tip.classList.add("on");
-        const px = box.l + (iw * hover) / (runs[0].T.length - 1);
+        // The tip is positioned against .chart-body, not the canvas, so canvas
+        // coordinates have to be shifted by the canvas's offset inside it —
+        // otherwise the tip sits a padding-width away from the hovered point
+        // and clamps against the wrong right edge.
+        const dx = plot.offsetLeft,
+          dy = plot.offsetTop;
+        const px = dx + box.l + (iw * hover) / (runs[0].T.length - 1);
         const w = tip.offsetWidth;
-        tip.style.left = Math.min(Math.max(px + 14, 8), PW - w - 8) + "px";
-        tip.style.top = box.t + 12 + "px";
+        tip.style.left =
+          Math.min(Math.max(px + 14, dx), dx + PW - w) + "px";
+        tip.style.top = dy + box.t + 12 + "px";
         drawPlot();
       }
       function hideTip() {
@@ -2645,8 +2643,8 @@
             rctx.arc(0, 0, R * rr, 0, 7);
             rctx.stroke();
           }
-          for (let g = 0; g < 10; g++) {
-            const a = (g * Math.PI) / 5;
+          for (let i = 0; i < 10; i++) {
+            const a = (i * Math.PI) / 5;
             rctx.beginPath();
             rctx.moveTo(Math.cos(a) * R * 0.18, Math.sin(a) * R * 0.18);
             rctx.lineTo(Math.cos(a) * R, Math.sin(a) * R);
@@ -2977,20 +2975,15 @@
           rctx.stroke();
         }
         rctx.globalAlpha = 1;
-        const frac = Math.max(
-          0,
-          Math.min(1, (T - p.tamb) / Math.max(p.t0 - p.tamb, 1)),
-        );
-        const fyt = ty1 - (ty1 - ty0) * frac;
-        const hotT = heatColor(T, p);
+        const fyt = ty1 - (ty1 - ty0) * heatF;
         const merc = rctx.createLinearGradient(tx - 3, 0, tx + 3, 0);
-        merc.addColorStop(0, mix(hotT, "#000000", 0.15));
-        merc.addColorStop(0.4, mix(hotT, "#ffffff", 0.25));
-        merc.addColorStop(1, hotT);
+        merc.addColorStop(0, mix(hot, "#000000", 0.15));
+        merc.addColorStop(0.4, mix(hot, "#ffffff", 0.25));
+        merc.addColorStop(1, hot);
         rctx.fillStyle = merc;
         if (document.documentElement.getAttribute("data-theme") === "dark") {
-          rctx.shadowColor = hotT;
-          rctx.shadowBlur = 5 * frac;
+          rctx.shadowColor = hot;
+          rctx.shadowBlur = 5 * heatF;
         }
         rctx.beginPath();
         rctx.roundRect(tx - 3, fyt, 6, ty1 - fyt + 6, 3);
@@ -3030,13 +3023,23 @@
         rctx.restore();
       }
 
+      // Built once. Re-rendering the list on every switch blew away the focused
+      // button, so keyboard users lost their place after each selection.
       function renderNav() {
         $("#nav").innerHTML = EXPERIMENTS.map(
           (e, i) => `
-    <li><button type="button" data-exp="${i}" aria-current="${i === state.exp}">
+    <li><button type="button" data-exp="${i}" aria-current="false">
       <span class="sym">${e.sym}</span><span>${e.qty.replace(/^./, (c) => c.toUpperCase())}</span>
     </button></li>`,
         ).join("");
+        syncNav();
+      }
+      function syncNav() {
+        document
+          .querySelectorAll("#nav button[data-exp]")
+          .forEach((b) =>
+            b.setAttribute("aria-current", String(+b.dataset.exp === state.exp)),
+          );
       }
 
       function renderHead() {
@@ -3081,15 +3084,32 @@
 
       function renderChips() {
         const e = EXPERIMENTS[state.exp];
-        const cols = seriesColors(e, e.values.length);
+        const cols = seriesColors(e.values.length);
         $("#sweepChips").innerHTML = e.values
           .map(
             (v, i) => `
-    <button class="chip" type="button" data-chip="${i}" aria-pressed="${!state.off.has(i)}">
+    <button class="chip" type="button" data-chip="${i}" aria-pressed="true">
       <span class="swatch" style="background:${cols[i]}"></span>${e.fmt(v, state.params)}
     </button>`,
           )
           .join("");
+        syncChips();
+      }
+      // Toggling state is patched in place so the chip keeps DOM focus.
+      function syncChips() {
+        const onlyOne =
+          EXPERIMENTS[state.exp].values.length - state.off.size <= 1;
+        document.querySelectorAll("#sweepChips .chip").forEach((b) => {
+          const on = !state.off.has(+b.dataset.chip);
+          b.setAttribute("aria-pressed", String(on));
+          // The click on the last visible series was silently swallowed, with
+          // nothing to say why. aria-disabled (rather than disabled) keeps it
+          // focusable and undimmed, since it is still the active series.
+          const locked = on && onlyOne;
+          b.setAttribute("aria-disabled", String(locked));
+          if (locked) b.title = "At least one run must stay visible";
+          else b.removeAttribute("title");
+        });
       }
 
       function fieldHTML(key) {
@@ -3111,7 +3131,7 @@
     <div class="field-top"><label for="f-${key}">${icon}${P.label}</label>
       <span class="field-val">${(+val).toFixed(P.dp)}<span>${P.unit}</span></span></div>
     <input type="range" id="f-${key}" data-key="${key}" min="${P.min}" max="${P.max}" step="${P.step}"
-      value="${val}" aria-label="${P.label}"></div>`;
+      value="${val}" aria-valuetext="${(+val).toFixed(P.dp)} ${P.unit}"></div>`;
       }
 
       function renderFields() {
@@ -3121,12 +3141,13 @@
       }
 
       function renderResults() {
-        const e = EXPERIMENTS[state.exp];
+        // The first cell holds a real button: the rows drive the selected run,
+        // and a bare click handler on <tr> is unreachable by keyboard.
         $("#resultsBody").innerHTML = runs
           .map((r, i) => {
             const m = mets[i];
-            return `<tr data-row="${i}" class="${i === state.active ? "is-active" : ""}">
-      <td><span class="swatch" style="background:${r.color}"></span>${r.label}</td>
+            return `<tr data-row="${i}">
+      <td><button type="button" class="row-pick" data-row="${i}" aria-pressed="false"><span class="swatch" style="background:${r.color}"></span>${r.label}</button></td>
       <td>${m.k ? m.k.toFixed(4) : "—"}</td>
       <td>${m.tau ? m.tau.toFixed(1) : "—"}</td>
       <td>${m.half ? m.half.toFixed(1) : "> " + state.params.dur}</td>
@@ -3135,40 +3156,92 @@
     </tr>`;
           })
           .join("");
+        syncResults();
 
         $("#legend").innerHTML = runs
           .map(
-            (r, i) =>
+            (r) =>
               `<span class="legend-item"><span class="swatch" style="background:${r.color}"></span>${r.label}</span>`,
           )
           .join("");
+      }
+      function syncResults() {
+        document.querySelectorAll("#resultsBody tr[data-row]").forEach((tr) => {
+          const on = +tr.dataset.row === state.active;
+          tr.classList.toggle("is-active", on);
+          tr.querySelector(".row-pick").setAttribute(
+            "aria-pressed",
+            String(on),
+          );
+        });
+      }
+
+      // Temperature shown by the readout, reused by the rig between frames.
+      let curT = null;
+      // The unit <span> is authored in the markup, so only the leading text
+      // node changes — cheaper and quieter than rewriting innerHTML each frame.
+      function setStat(sel, value) {
+        const node = $(sel).firstChild;
+        if (node.nodeValue !== value) node.nodeValue = value;
       }
 
       function renderReadout() {
         const r = runs[state.active];
         if (!r) return;
-        const i = Math.min(
-          r.T.length - 1,
-          Math.round((r.T.length - 1) * state.prog),
+        const end = r.T.length - 1;
+        const i = Math.max(0, Math.min(end, Math.round(end * state.prog)));
+        setStat("#roTime", ((i * DT) / 60).toFixed(1));
+        setStat("#roTemp", r.T[i].toFixed(1));
+        setStat("#roFlux", r.Q[i].toFixed(1));
+        curT = r.T[i];
+        return curT;
+      }
+
+      // The canvas carries no text, so give it a name that tracks the data.
+      function describePlot() {
+        const e = EXPERIMENTS[state.exp];
+        const axis =
+          state.axis === "abs"
+            ? "temperature in °C"
+            : state.axis === "log"
+              ? "log excess temperature"
+              : "excess temperature in K";
+        $("#plotCanvas").setAttribute(
+          "aria-label",
+          `Line chart of ${axis} against time in minutes, over ${state.params.dur} minutes, ` +
+            `for ${runs.length} run${runs.length === 1 ? "" : "s"} varying ${e.qty}: ` +
+            runs
+              .map((r) => `${r.label} ends at ${r.T[r.T.length - 1].toFixed(1)} °C`)
+              .join("; ") +
+            ". The results table below lists the same runs as text.",
         );
-        $("#roTime").innerHTML =
-          ((i * DT) / 60).toFixed(1) + "<span>min</span>";
-        $("#roTemp").innerHTML = r.T[i].toFixed(1) + "<span>°C</span>";
-        $("#roFlux").innerHTML = r.Q[i].toFixed(1) + "<span>W</span>";
-        return r.T[i];
       }
 
       function refresh() {
         build();
-        renderChips();
+        syncChips();
         renderResults();
+        describePlot();
         drawPlot();
         const T = renderReadout();
         drawRig(T ?? state.params.t0);
       }
       function renderAll() {
         renderFields();
+        renderChips();
         refresh();
+      }
+
+      // Dragging a slider fires input ~60×/s, and one refresh re-integrates the
+      // whole sweep (at dur = 240 min that is >100k heat-loss evaluations).
+      // Collapse bursts to one recompute per frame.
+      let pendingRefresh = 0;
+      function scheduleRefresh() {
+        if (pendingRefresh) return;
+        pendingRefresh = requestAnimationFrame(() => {
+          pendingRefresh = 0;
+          refresh();
+        });
       }
 
       function selectExperiment(i, scroll) {
@@ -3176,7 +3249,7 @@
         state.off.clear();
         state.active = null;
         state.params = { ...BASE, ...(EXPERIMENTS[i].preset || {}) };
-        renderNav();
+        syncNav();
         renderHead();
         startReveal(1.4);
         renderAll();
@@ -3186,8 +3259,8 @@
             block: "start",
           });
       }
-      const reducedMotion = () =>
-        matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const motionMQ = matchMedia("(prefers-reduced-motion: reduce)");
+      const reducedMotion = () => motionMQ.matches;
 
       $("#nav").addEventListener("click", (ev) => {
         const b = ev.target.closest("button[data-exp]");
@@ -3213,21 +3286,24 @@
         const P = PARAM[k];
         state.params[k] = P.opts ? el.value : +el.value;
         if (!P.opts) {
+          const shown = (+el.value).toFixed(P.dp);
           const out = el.previousElementSibling.querySelector(".field-val");
-          if (out)
-            out.innerHTML =
-              (+el.value).toFixed(P.dp) + `<span>${P.unit}</span>`;
+          if (out) out.innerHTML = shown + `<span>${P.unit}</span>`;
+          // Without this a slider is read out as a bare number, no unit.
+          el.setAttribute("aria-valuetext", `${shown} ${P.unit}`);
         }
-        refresh();
+        scheduleRefresh();
       });
 
       $("#resultsBody").addEventListener("click", (ev) => {
         const tr = ev.target.closest("tr[data-row]");
         if (!tr) return;
         state.active = +tr.dataset.row;
-        renderResults();
+        // Patch the selection rather than re-rendering, so the row button that
+        // was just activated keeps focus.
+        syncResults();
         drawPlot();
-        drawRig(renderReadout());
+        drawRig(renderReadout() ?? state.params.t0);
       });
 
       document.querySelectorAll("[data-axis]").forEach((b) =>
@@ -3235,7 +3311,8 @@
           state.axis = b.dataset.axis;
           document
             .querySelectorAll("[data-axis]")
-            .forEach((o) => o.setAttribute("aria-pressed", o === b));
+            .forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+          describePlot();
           drawPlot();
         }),
       );
@@ -3243,16 +3320,12 @@
       let raf = null,
         last = 0;
       function setPlayIcon() {
+        const btn = $("#playBtn");
         $("#playIcon").setAttribute(
           "href",
           state.playing ? "#i-pause" : "#i-play",
         );
-      }
-      function resetPlay() {
-        state.playing = false;
-        state.prog = 1;
-        state.eased = false;
-        setPlayIcon();
+        btn.setAttribute("aria-label", state.playing ? "Pause run" : "Play run");
       }
       function startReveal(dur) {
         if (reducedMotion()) {
@@ -3266,7 +3339,7 @@
         state.eased = true;
         state.playing = true;
         setPlayIcon();
-        last = performance.now();
+        restart();
       }
 
       $("#playBtn").addEventListener("click", () => {
@@ -3277,7 +3350,7 @@
         }
         state.playing = !state.playing;
         setPlayIcon();
-        last = performance.now();
+        restart();
       });
       $("#resetBtn").addEventListener("click", () => {
         state.prog = 1;
@@ -3288,7 +3361,11 @@
       });
 
       function loop(now) {
-        const dt = Math.min(0.05, (now - last) / 1000 || 0);
+        raf = null;
+        // The rAF timestamp is the frame's start time, which can predate the
+        // performance.now() captured when the loop was armed. Clamp both ends
+        // so a negative delta can never drive state.prog out of [0, 1].
+        const dt = Math.min(0.05, Math.max(0, (now - last) / 1000 || 0));
         last = now;
         const p = runs[state.active] ? runs[state.active].p : state.params;
         if (!reducedMotion()) {
@@ -3296,22 +3373,52 @@
           wisp += dt;
         }
         if (state.playing) {
-          state.prog += dt / state.animDur;
+          state.prog = Math.min(1, state.prog + dt / state.animDur);
           if (state.prog >= 1) {
-            state.prog = 1;
             state.playing = false;
             setPlayIcon();
           }
           drawPlot();
+          drawRig(renderReadout() ?? state.params.t0);
+        } else {
+          drawRig(curT ?? state.params.t0);
         }
-        drawRig(renderReadout() ?? state.params.t0);
+        schedule();
+      }
+
+      // Idle when nothing can move: no play-through in flight, ambient motion
+      // suppressed by prefers-reduced-motion, or the tab is in the background.
+      function schedule() {
+        if (raf !== null || document.hidden) return;
+        if (!state.playing && reducedMotion()) return;
         raf = requestAnimationFrame(loop);
       }
+      function restart() {
+        last = performance.now();
+        schedule();
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          if (raf !== null) cancelAnimationFrame(raf);
+          raf = null;
+        } else restart();
+      });
+      motionMQ.addEventListener("change", () => {
+        if (reducedMotion()) {
+          state.prog = 1;
+          state.playing = false;
+          setPlayIcon();
+          refresh();
+        } else restart();
+      });
 
       let rz;
       addEventListener("resize", () => {
         clearTimeout(rz);
-        rz = setTimeout(drawPlot, 90);
+        rz = setTimeout(() => {
+          drawPlot();
+          drawRig(curT ?? state.params.t0);
+        }, 90);
       });
 
       const themeBtn = $("#themeBtn");
@@ -3332,12 +3439,24 @@
         try {
           localStorage.setItem("thermal-theme", curTheme);
         } catch (e) {}
-        refresh();
+        recolor();
       });
 
+      // A theme flip only changes the palette — repeat the whole sweep's
+      // integration for it and a long run visibly stalls the toggle.
+      function recolor() {
+        const cols = seriesColors(EXPERIMENTS[state.exp].values.length);
+        runs.forEach((r) => (r.color = cols[r.vi]));
+        renderChips();
+        renderResults();
+        drawPlot();
+        drawRig(curT ?? state.params.t0);
+      }
+
+      renderNav();
       selectExperiment(0, false);
-      last = performance.now();
-      raf = requestAnimationFrame(loop);
+      restart();
     </script>
   </body>
 </html>
+    
